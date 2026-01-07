@@ -1,0 +1,19 @@
+import pandas as pd
+
+# Load the ready dataset
+df = pd.read_csv('Final_Instagram_Analytics_Ready.csv')
+
+# 1. Binning Hashtags: Grouping into ranges for easier Power BI filtering
+bins = [0, 5, 10, 15, 20, 25, 31]
+labels = ['0-5', '6-10', '11-15', '16-20', '21-25', '26-30']
+df['Hashtag_Range'] = pd.cut(df['hashtags_count'], bins=bins, labels=labels, include_lowest=True)
+
+# 2. Traffic Source Analysis: Checking which source is most valuable
+traffic_summary = df.groupby('traffic_source').agg({
+    'reach': 'mean',
+    'engagement_rate': 'mean',
+    'followers_gained': 'mean'
+}).sort_values(by='engagement_rate', ascending=False)
+
+# Save the final file
+df.to_csv('Final_Instagram_Analytics_V2.csv', index=False)
