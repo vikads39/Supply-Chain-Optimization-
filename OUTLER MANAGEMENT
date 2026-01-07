@@ -1,0 +1,23 @@
+import pandas as pd
+
+
+df = pd.read_csv('Cleaned_Instagram_Analytics_Dates.csv')
+
+numeric_cols = ['likes', 'comments', 'shares', 'saves', 'reach', 'impressions', 
+                'caption_length', 'hashtags_count', 'followers_gained', 'engagement_rate']
+
+for col in numeric_cols:
+    df[col] = pd.to_numeric(df[col], errors='coerce')
+
+# 2. Identify and handle engagement_rate outliers (> 100%)
+# We replace extreme outliers with the median of their specific Media Type
+medians = df.groupby('media_type')['engagement_rate'].transform('median')
+df.loc[df['engagement_rate'] > 100, 'engagement_rate'] = medians
+
+# 3. Handle any potential null values (Data Integrity)
+df[numeric_cols] = df[numeric_cols].fillna(0)
+categorical_cols = df.select_dtypes(include=['object']).columns
+df[categorical_cols] = df[categorical_cols].fillna('Unknown')
+
+# Save the progress
+df.to_csv('Cleaned_Instagram_Analytics_NoOutliers.csv', index=False)
