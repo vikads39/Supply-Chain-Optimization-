@@ -1,0 +1,25 @@
+import pandas as pd
+
+# Load the cleaned data
+df = pd.read_csv('Cleaned_Instagram_Analytics_NoOutliers.csv')
+
+# 1. Total Interactions: The sum of all engagement actions
+df['Total_Interactions'] = df['likes'] + df['comments'] + df['shares'] + df['saves']
+
+# 2. Reach Efficiency: Percentage of impressions that turned into unique reach
+# Helps identify content that spreads beyond the existing follower base
+df['Reach_Efficiency'] = (df['reach'] / df['impressions'])
+
+# 3. Categorize Captions: To analyze if long vs short text impacts engagement
+def categorize_caption(length):
+    if length < 500:
+        return 'Short'
+    elif length <= 1500:
+        return 'Medium'
+    else:
+        return 'Long'
+
+df['Caption_Length_Category'] = df['caption_length'].apply(categorize_caption)
+
+# Save the finalized dataset
+df.to_csv('Final_Instagram_Analytics_Ready.csv', index=False)
