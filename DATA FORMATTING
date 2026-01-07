@@ -1,0 +1,15 @@
+import pandas as pd
+
+# Load the dataset
+df = pd.read_csv('Instagram_Analytics.csv')
+
+# 1. Convert upload_date to a standard datetime format
+df['upload_date'] = pd.to_datetime(df['upload_date'])
+
+# 2. Extract Month, Day, and Hour for time-series analysis
+df['Month_Name'] = df['upload_date'].dt.month_name()
+df['Day_of_Week'] = df['upload_date'].dt.day_name()
+df['Hour'] = df['upload_date'].dt.hour
+
+# Save the transformed data for the next steps
+df.to_csv('Cleaned_Instagram_Analytics_Dates.csv', index=False)
